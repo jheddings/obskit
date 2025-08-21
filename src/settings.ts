@@ -1,4 +1,4 @@
-import { Plugin, Setting } from "obsidian"
+import { Plugin, Setting, PluginSettingTab, App } from "obsidian"
 
 /** Configuration for a setting element. */
 interface SettingConfig {
@@ -183,16 +183,16 @@ export abstract class DropdownSetting<T> extends BaseSetting<T> {
 /**
  * Base class for settings tab pages.
  */
-export abstract class SettingsTabPage {
+export abstract class SettingsTabPage<T extends Plugin = Plugin> {
     public isActive: boolean = false
 
-    protected _plugin: Plugin
+    protected _plugin: T
     protected _name: string
 
     /**
      * Creates a new SettingsTabPage instance.
      */
-    constructor(plugin: Plugin, name: string) {
+    constructor(plugin: T, name: string) {
         this._plugin = plugin
         this._name = name
     }
@@ -211,5 +211,224 @@ export abstract class SettingsTabPage {
         return this._name
     }
 
+    /**
+     * Gets the plugin instance.
+     */
+    get plugin(): T {
+        return this._plugin
+    }
+
+    /**
+     * Display the settings page content.
+     * Override this method to implement the page content.
+     */
     abstract display(containerEl: HTMLElement): void
+
+    /**
+     * Called when the tab becomes active.
+     * Override this method to perform any initialization when the tab is shown.
+     */
+    onActivate(): void {
+        // Override in subclasses if needed
+    }
+
+    /**
+     * Called when the tab becomes inactive.
+     * Override this method to perform any cleanup when the tab is hidden.
+     */
+    onDeactivate(): void {
+        // Override in subclasses if needed
+    }
+}
+
+/**
+ * Manages a collection of settings tab pages and handles tab switching.
+ */
+export class SettingsTabManager {
+    private tabs: SettingsTabPage[] = []
+    private activeTab: SettingsTabPage | null = null
+    private tabContainer: HTMLElement | null = null
+    private contentContainer: HTMLElement | null = null
+
+    /**
+     * Adds a tab page to the manager.
+     */
+    addTab(tab: SettingsTabPage): SettingsTabManager {
+        this.tabs.push(tab)
+        return this
+    }
+
+    /**
+     * Adds multiple tab pages to the manager.
+     */
+    addTabs(tabs: SettingsTabPage[]): SettingsTabManager {
+        this.tabs.push(...tabs)
+        return this
+    }
+
+    /**
+     * Gets all registered tabs.
+     */
+    getTabs(): SettingsTabPage[] {
+        return [...this.tabs]
+    }
+
+    /**
+     * Gets the currently active tab.
+     */
+    getActiveTab(): SettingsTabPage | null {
+        return this.activeTab
+    }
+
+    /**
+     * Sets the active tab by index.
+     */
+    setActiveTab(index: number): void {
+        if (index >= 0 && index < this.tabs.length) {
+            const tab = this.tabs[index]
+            if (tab) {
+                this.activateTab(tab)
+            }
+        }
+    }
+
+    /**
+     * Sets the active tab by ID.
+     */
+    setActiveTabById(id: string): void {
+        const tab = this.tabs.find(t => t.id === id)
+        if (tab) {
+            this.activateTab(tab)
+        }
+    }
+
+    /**
+     * Activates a specific tab.
+     */
+    private activateTab(tab: SettingsTabPage): void {
+        // Deactivate current tab
+        if (this.activeTab) {
+            this.activeTab.isActive = false
+            this.activeTab.onDeactivate()
+        }
+
+        // Activate new tab
+        this.activeTab = tab
+        tab.isActive = true
+        tab.onActivate()
+
+        // Update UI
+        this.updateTabButtonStyles()
+        this.displayActiveTabContent()
+    }
+
+    /**
+     * Displays the tab manager UI in the provided container.
+     */
+    display(containerEl: HTMLElement): void {
+        if (this.tabs.length === 0) {
+            throw new Error("No tabs have been added to the manager")
+        }
+
+        containerEl.empty()
+
+        // Create tab container
+        this.tabContainer = containerEl.createEl("div", {
+            cls: "obskit-settings-tab-container",
+        })
+
+        // Create content container
+        this.contentContainer = containerEl.createEl("div", {
+            cls: "obskit-settings-tab-content",
+        })
+
+        // Create tab buttons
+        this.tabs.forEach((tab, _index) => {
+            const tabEl = this.tabContainer!.createEl("button", {
+                text: tab.name,
+                cls: "obskit-settings-tab-button",
+            })
+
+            tabEl.addEventListener("click", () => {
+                this.activateTab(tab)
+            })
+        })
+
+        // Activate first tab by default
+        if (this.tabs.length > 0) {
+            const firstTab = this.tabs[0]
+            if (firstTab) {
+                this.activateTab(firstTab)
+            }
+        }
+    }
+
+    /**
+     * Updates the styles for the tab buttons.
+     */
+    private updateTabButtonStyles(): void {
+        if (!this.tabContainer) return
+
+        const tabButtons = this.tabContainer.querySelectorAll(".obskit-settings-tab-button")
+
+        tabButtons.forEach((button, index) => {
+            const tab = this.tabs[index]
+            if (tab) {
+                if (tab.isActive) {
+                    button.addClass("obskit-settings-tab-button-active")
+                } else {
+                    button.removeClass("obskit-settings-tab-button-active")
+                }
+            }
+        })
+    }
+
+    /**
+     * Displays the content of the active tab.
+     */
+    private displayActiveTabContent(): void {
+        if (!this.contentContainer || !this.activeTab) return
+
+        this.contentContainer.empty()
+        this.activeTab.display(this.contentContainer)
+    }
+}
+
+/**
+ * Base class for plugin settings tabs that provides tab functionality.
+ * Extends Obsidian's PluginSettingTab and integrates with SettingsTabManager.
+ */
+export abstract class PluginSettingsTab extends PluginSettingTab {
+    protected tabManager: SettingsTabManager
+
+    constructor(app: App, plugin: Plugin) {
+        super(app, plugin)
+        this.tabManager = new SettingsTabManager()
+        this.initializeTabs()
+    }
+
+    /**
+     * Initialize the tabs for this settings tab.
+     * Override this method to add your tab pages.
+     */
+    protected abstract initializeTabs(): void
+
+    /**
+     * Display the settings tab UI.
+     */
+    display(): void {
+        this.tabManager.display(this.containerEl)
+    }
+
+    /**
+     * Hide the settings tab UI.
+     */
+    hide(): void {
+        // Clean up any active tab
+        const activeTab = this.tabManager.getActiveTab()
+        if (activeTab) {
+            activeTab.isActive = false
+            activeTab.onDeactivate()
+        }
+    }
 }
