@@ -28,33 +28,33 @@ Create a boolean toggle setting:
 
 ```typescript
 class MyToggleSetting extends ToggleSetting {
-  private _value = false
+    private _value = false
 
-  get value(): boolean {
-    return this._value
-  }
+    get value(): boolean {
+        return this._value
+    }
 
-  set value(val: boolean) {
-    this._value = val
-  }
+    set value(val: boolean) {
+        this._value = val
+    }
 
-  get default(): boolean {
-    return false
-  }
+    get default(): boolean {
+        return false
+    }
 }
 
 // Usage in your plugin's settings tab
 const toggleSetting = new MyToggleSetting({
-  name: 'Enable Feature',
-  description: 'Turn this feature on or off',
+    name: 'Enable Feature',
+    description: 'Turn this feature on or off',
 })
 
 toggleSetting
-  .onChange(value => {
-    console.log('Toggle changed to:', value)
-    // Save to plugin settings
-  })
-  .display(containerEl)
+    .onChange(value => {
+        console.log('Toggle changed to:', value)
+        // Save to plugin settings
+    })
+    .display(containerEl)
 ```
 
 ### Slider Setting
@@ -63,44 +63,44 @@ Create a numeric slider setting:
 
 ```typescript
 class MySliderSetting extends SliderSetting {
-  private _value = 50
+    private _value = 50
 
-  get value(): number {
-    return this._value
-  }
+    get value(): number {
+        return this._value
+    }
 
-  set value(val: number) {
-    this._value = val
-  }
+    set value(val: number) {
+        this._value = val
+    }
 
-  get default(): number {
-    return 50
-  }
+    get default(): number {
+        return 50
+    }
 
-  get minimum(): number {
-    return 0
-  }
+    get minimum(): number {
+        return 0
+    }
 
-  get maximum(): number {
-    return 100
-  }
+    get maximum(): number {
+        return 100
+    }
 
-  get step(): number {
-    return 1
-  }
+    get step(): number {
+        return 1
+    }
 }
 
 // Usage
 const sliderSetting = new MySliderSetting({
-  name: 'Opacity Level',
-  description: 'Set the opacity percentage',
+    name: 'Opacity Level',
+    description: 'Set the opacity percentage',
 })
 
 sliderSetting
-  .onChange(value => {
-    console.log('Slider changed to:', value)
-  })
-  .display(containerEl)
+    .onChange(value => {
+        console.log('Slider changed to:', value)
+    })
+    .display(containerEl)
 ```
 
 ### Text Area Setting
@@ -109,36 +109,36 @@ Create a multi-line text input:
 
 ```typescript
 class MyTextAreaSetting extends TextAreaSetting {
-  private _value = ''
+    private _value = ''
 
-  get value(): string {
-    return this._value
-  }
+    get value(): string {
+        return this._value
+    }
 
-  set value(val: string) {
-    this._value = val
-  }
+    set value(val: string) {
+        this._value = val
+    }
 
-  get default(): string {
-    return ''
-  }
+    get default(): string {
+        return ''
+    }
 
-  get placeholder(): string | null {
-    return 'Enter your custom text here...'
-  }
+    get placeholder(): string | null {
+        return 'Enter your custom text here...'
+    }
 }
 
 // Usage
 const textAreaSetting = new MyTextAreaSetting({
-  name: 'Custom Template',
-  description: 'Define your custom template text',
+    name: 'Custom Template',
+    description: 'Define your custom template text',
 })
 
 textAreaSetting
-  .onChange(value => {
-    console.log('Text changed to:', value)
-  })
-  .display(containerEl)
+    .onChange(value => {
+        console.log('Text changed to:', value)
+    })
+    .display(containerEl)
 ```
 
 ### Dropdown Setting
@@ -149,40 +149,40 @@ Create a dropdown with predefined options:
 type ThemeOption = 'light' | 'dark' | 'auto'
 
 class MyDropdownSetting extends DropdownSetting<ThemeOption> {
-  private _value: ThemeOption = 'auto'
+    private _value: ThemeOption = 'auto'
 
-  get value(): ThemeOption {
-    return this._value
-  }
+    get value(): ThemeOption {
+        return this._value
+    }
 
-  set value(val: ThemeOption) {
-    this._value = val
-  }
+    set value(val: ThemeOption) {
+        this._value = val
+    }
 
-  get default(): ThemeOption {
-    return 'auto'
-  }
+    get default(): ThemeOption {
+        return 'auto'
+    }
 
-  get options(): { key: string; label: string; value: ThemeOption }[] {
-    return [
-      { key: 'light', label: 'Light Theme', value: 'light' },
-      { key: 'dark', label: 'Dark Theme', value: 'dark' },
-      { key: 'auto', label: 'Auto (System)', value: 'auto' },
-    ]
-  }
+    get options(): { key: string; label: string; value: ThemeOption }[] {
+        return [
+            { key: 'light', label: 'Light Theme', value: 'light' },
+            { key: 'dark', label: 'Dark Theme', value: 'dark' },
+            { key: 'auto', label: 'Auto (System)', value: 'auto' },
+        ]
+    }
 }
 
 // Usage
 const dropdownSetting = new MyDropdownSetting({
-  name: 'Theme Selection',
-  description: 'Choose your preferred theme',
+    name: 'Theme Selection',
+    description: 'Choose your preferred theme',
 })
 
 dropdownSetting
-  .onChange(value => {
-    console.log('Theme changed to:', value)
-  })
-  .display(containerEl)
+    .onChange(value => {
+        console.log('Theme changed to:', value)
+    })
+    .display(containerEl)
 ```
 
 ### Complete Plugin Settings Example
@@ -194,112 +194,112 @@ import { Plugin, PluginSettingTab, Setting } from 'obsidian'
 import { ToggleSetting, SliderSetting, DropdownSetting } from 'obskit'
 
 interface MyPluginSettings {
-  enableFeature: boolean
-  opacity: number
-  theme: 'light' | 'dark' | 'auto'
+    enableFeature: boolean
+    opacity: number
+    theme: 'light' | 'dark' | 'auto'
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-  enableFeature: false,
-  opacity: 50,
-  theme: 'auto',
+    enableFeature: false,
+    opacity: 50,
+    theme: 'auto',
 }
 
 export default class MyPlugin extends Plugin {
-  settings: MyPluginSettings
+    settings: MyPluginSettings
 
-  async onload() {
-    await this.loadSettings()
-    this.addSettingTab(new MyPluginSettingTab(this.app, this))
-  }
+    async onload() {
+        await this.loadSettings()
+        this.addSettingTab(new MyPluginSettingTab(this.app, this))
+    }
 
-  async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
-  }
+    async loadSettings() {
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+    }
 
-  async saveSettings() {
-    await this.saveData(this.settings)
-  }
+    async saveSettings() {
+        await this.saveData(this.settings)
+    }
 }
 
 class MyPluginSettingTab extends PluginSettingTab {
-  plugin: MyPlugin
+    plugin: MyPlugin
 
-  constructor(app: App, plugin: MyPlugin) {
-    super(app, plugin)
-    this.plugin = plugin
-  }
-
-  display(): void {
-    const { containerEl } = this
-    containerEl.empty()
-
-    // Feature toggle
-    class FeatureToggle extends ToggleSetting {
-      constructor(private plugin: MyPlugin) {
-        super({
-          name: 'Enable Feature',
-          description: 'Turn the main feature on or off',
-        })
-      }
-
-      get value(): boolean {
-        return this.plugin.settings.enableFeature
-      }
-
-      set value(val: boolean) {
-        this.plugin.settings.enableFeature = val
-      }
-
-      get default(): boolean {
-        return DEFAULT_SETTINGS.enableFeature
-      }
+    constructor(app: App, plugin: MyPlugin) {
+        super(app, plugin)
+        this.plugin = plugin
     }
 
-    new FeatureToggle(this.plugin)
-      .onChange(async () => {
-        await this.plugin.saveSettings()
-      })
-      .display(containerEl)
+    display(): void {
+        const { containerEl } = this
+        containerEl.empty()
 
-    // Opacity slider
-    class OpacitySlider extends SliderSetting {
-      constructor(private plugin: MyPlugin) {
-        super({
-          name: 'Opacity',
-          description: 'Set the opacity level',
-        })
-      }
+        // Feature toggle
+        class FeatureToggle extends ToggleSetting {
+            constructor(private plugin: MyPlugin) {
+                super({
+                    name: 'Enable Feature',
+                    description: 'Turn the main feature on or off',
+                })
+            }
 
-      get value(): number {
-        return this.plugin.settings.opacity
-      }
+            get value(): boolean {
+                return this.plugin.settings.enableFeature
+            }
 
-      set value(val: number) {
-        this.plugin.settings.opacity = val
-      }
+            set value(val: boolean) {
+                this.plugin.settings.enableFeature = val
+            }
 
-      get default(): number {
-        return DEFAULT_SETTINGS.opacity
-      }
+            get default(): boolean {
+                return DEFAULT_SETTINGS.enableFeature
+            }
+        }
 
-      get minimum(): number {
-        return 0
-      }
-      get maximum(): number {
-        return 100
-      }
-      get step(): number {
-        return 1
-      }
+        new FeatureToggle(this.plugin)
+            .onChange(async () => {
+                await this.plugin.saveSettings()
+            })
+            .display(containerEl)
+
+        // Opacity slider
+        class OpacitySlider extends SliderSetting {
+            constructor(private plugin: MyPlugin) {
+                super({
+                    name: 'Opacity',
+                    description: 'Set the opacity level',
+                })
+            }
+
+            get value(): number {
+                return this.plugin.settings.opacity
+            }
+
+            set value(val: number) {
+                this.plugin.settings.opacity = val
+            }
+
+            get default(): number {
+                return DEFAULT_SETTINGS.opacity
+            }
+
+            get minimum(): number {
+                return 0
+            }
+            get maximum(): number {
+                return 100
+            }
+            get step(): number {
+                return 1
+            }
+        }
+
+        new OpacitySlider(this.plugin)
+            .onChange(async () => {
+                await this.plugin.saveSettings()
+            })
+            .display(containerEl)
     }
-
-    new OpacitySlider(this.plugin)
-      .onChange(async () => {
-        await this.plugin.saveSettings()
-      })
-      .display(containerEl)
-  }
 }
 ```
 
