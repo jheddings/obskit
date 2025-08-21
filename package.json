@@ -39,6 +39,7 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "preflight": "npm run format && npm run lint:fix && npm test",
+        "release": "npm run preflight && git push && git push --tags",
         "postversion": "git commit --amend -m \"obskit-$npm_package_version\""
     },
     "dependencies": {
