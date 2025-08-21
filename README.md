@@ -19,7 +19,7 @@ npm install obskit
 ### Basic Import
 
 ```typescript
-import { ToggleSetting, SliderSetting, TextAreaSetting, DropdownSetting } from 'obskit'
+import { ToggleSetting, SliderSetting, TextAreaSetting, DropdownSetting } from "obskit"
 ```
 
 ### Toggle Setting
@@ -45,13 +45,13 @@ class MyToggleSetting extends ToggleSetting {
 
 // Usage in your plugin's settings tab
 const toggleSetting = new MyToggleSetting({
-    name: 'Enable Feature',
-    description: 'Turn this feature on or off',
+    name: "Enable Feature",
+    description: "Turn this feature on or off",
 })
 
 toggleSetting
     .onChange(value => {
-        console.log('Toggle changed to:', value)
+        console.log("Toggle changed to:", value)
         // Save to plugin settings
     })
     .display(containerEl)
@@ -92,13 +92,13 @@ class MySliderSetting extends SliderSetting {
 
 // Usage
 const sliderSetting = new MySliderSetting({
-    name: 'Opacity Level',
-    description: 'Set the opacity percentage',
+    name: "Opacity Level",
+    description: "Set the opacity percentage",
 })
 
 sliderSetting
     .onChange(value => {
-        console.log('Slider changed to:', value)
+        console.log("Slider changed to:", value)
     })
     .display(containerEl)
 ```
@@ -109,7 +109,7 @@ Create a multi-line text input:
 
 ```typescript
 class MyTextAreaSetting extends TextAreaSetting {
-    private _value = ''
+    private _value = ""
 
     get value(): string {
         return this._value
@@ -120,23 +120,23 @@ class MyTextAreaSetting extends TextAreaSetting {
     }
 
     get default(): string {
-        return ''
+        return ""
     }
 
     get placeholder(): string | null {
-        return 'Enter your custom text here...'
+        return "Enter your custom text here..."
     }
 }
 
 // Usage
 const textAreaSetting = new MyTextAreaSetting({
-    name: 'Custom Template',
-    description: 'Define your custom template text',
+    name: "Custom Template",
+    description: "Define your custom template text",
 })
 
 textAreaSetting
     .onChange(value => {
-        console.log('Text changed to:', value)
+        console.log("Text changed to:", value)
     })
     .display(containerEl)
 ```
@@ -146,10 +146,10 @@ textAreaSetting
 Create a dropdown with predefined options:
 
 ```typescript
-type ThemeOption = 'light' | 'dark' | 'auto'
+type ThemeOption = "light" | "dark" | "auto"
 
 class MyDropdownSetting extends DropdownSetting<ThemeOption> {
-    private _value: ThemeOption = 'auto'
+    private _value: ThemeOption = "auto"
 
     get value(): ThemeOption {
         return this._value
@@ -160,27 +160,27 @@ class MyDropdownSetting extends DropdownSetting<ThemeOption> {
     }
 
     get default(): ThemeOption {
-        return 'auto'
+        return "auto"
     }
 
     get options(): { key: string; label: string; value: ThemeOption }[] {
         return [
-            { key: 'light', label: 'Light Theme', value: 'light' },
-            { key: 'dark', label: 'Dark Theme', value: 'dark' },
-            { key: 'auto', label: 'Auto (System)', value: 'auto' },
+            { key: "light", label: "Light Theme", value: "light" },
+            { key: "dark", label: "Dark Theme", value: "dark" },
+            { key: "auto", label: "Auto (System)", value: "auto" },
         ]
     }
 }
 
 // Usage
 const dropdownSetting = new MyDropdownSetting({
-    name: 'Theme Selection',
-    description: 'Choose your preferred theme',
+    name: "Theme Selection",
+    description: "Choose your preferred theme",
 })
 
 dropdownSetting
     .onChange(value => {
-        console.log('Theme changed to:', value)
+        console.log("Theme changed to:", value)
     })
     .display(containerEl)
 ```
@@ -190,19 +190,19 @@ dropdownSetting
 Here's how you might use these settings in a complete Obsidian plugin:
 
 ```typescript
-import { Plugin, PluginSettingTab, Setting } from 'obsidian'
-import { ToggleSetting, SliderSetting, DropdownSetting } from 'obskit'
+import { Plugin, PluginSettingTab, Setting } from "obsidian"
+import { ToggleSetting, SliderSetting, DropdownSetting } from "obskit"
 
 interface MyPluginSettings {
     enableFeature: boolean
     opacity: number
-    theme: 'light' | 'dark' | 'auto'
+    theme: "light" | "dark" | "auto"
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
     enableFeature: false,
     opacity: 50,
-    theme: 'auto',
+    theme: "auto",
 }
 
 export default class MyPlugin extends Plugin {
@@ -238,8 +238,8 @@ class MyPluginSettingTab extends PluginSettingTab {
         class FeatureToggle extends ToggleSetting {
             constructor(private plugin: MyPlugin) {
                 super({
-                    name: 'Enable Feature',
-                    description: 'Turn the main feature on or off',
+                    name: "Enable Feature",
+                    description: "Turn the main feature on or off",
                 })
             }
 
@@ -266,8 +266,8 @@ class MyPluginSettingTab extends PluginSettingTab {
         class OpacitySlider extends SliderSetting {
             constructor(private plugin: MyPlugin) {
                 super({
-                    name: 'Opacity',
-                    description: 'Set the opacity level',
+                    name: "Opacity",
+                    description: "Set the opacity level",
                 })
             }
 

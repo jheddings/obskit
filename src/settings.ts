@@ -1,4 +1,4 @@
-import { Plugin, Setting } from 'obsidian'
+import { Plugin, Setting } from "obsidian"
 
 /** Configuration for a setting element. */
 interface SettingConfig {
@@ -165,7 +165,7 @@ export abstract class DropdownSetting<T> extends BaseSetting<T> {
      */
     protected getKeyForValue(value: T): string {
         const option = this.options.find(opt => opt.value === value)
-        return option?.key ?? this.options[0]?.key ?? ''
+        return option?.key ?? this.options[0]?.key ?? ""
     }
 
     /**
@@ -201,7 +201,7 @@ export abstract class SettingsTabPage {
      * Gets the tab page ID.
      */
     get id(): string {
-        return this._name.toLowerCase().replace(/\s+/g, '-')
+        return this._name.toLowerCase().replace(/\s+/g, "-")
     }
 
     /**
