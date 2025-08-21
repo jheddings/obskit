@@ -1,4 +1,4 @@
-import { Setting } from 'obsidian'
+import { Plugin, Setting } from 'obsidian'
 
 /** Configuration for a setting element. */
 interface SettingConfig {
@@ -178,4 +178,38 @@ export abstract class DropdownSetting<T> extends BaseSetting<T> {
         }
         return option.value
     }
+}
+
+/**
+ * Base class for settings tab pages.
+ */
+export abstract class SettingsTabPage {
+    public isActive: boolean = false
+
+    protected _plugin: Plugin
+    protected _name: string
+
+    /**
+     * Creates a new SettingsTabPage instance.
+     */
+    constructor(plugin: Plugin, name: string) {
+        this._plugin = plugin
+        this._name = name
+    }
+
+    /**
+     * Gets the tab page ID.
+     */
+    get id(): string {
+        return this._name.toLowerCase().replace(/\s+/g, '-')
+    }
+
+    /**
+     * Gets the tab page name.
+     */
+    get name(): string {
+        return this._name
+    }
+
+    abstract display(containerEl: HTMLElement): void
 }
