@@ -1,6 +1,6 @@
 {
     "name": "obskit",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Utilities and helpers for building Obsidian plugins.",
     "keywords": [
         "obsidian"
@@ -33,11 +33,12 @@
         "dev": "tsc --watch",
         "clean": "rm -rf dist",
         "prepublishOnly": "npm run clean && npm run build",
-        "test": "jest",
+        "test": "npm run build",
         "lint": "eslint src",
         "lint:fix": "eslint src --fix",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "preflight": "npm run format && npm run lint:fix && npm test"
     },
     "dependencies": {
         "obsidian": "^1.8.7"

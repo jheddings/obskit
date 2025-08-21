@@ -85,6 +85,33 @@ export abstract class SliderSetting extends BaseSetting<number> {
 }
 
 /**
+ * Text input setting for single-line input.
+ */
+export abstract class TextInputSetting extends BaseSetting<string> {
+    display(containerEl: HTMLElement): Setting {
+        return new Setting(containerEl)
+            .setName(this.name)
+            .setDesc(this.description)
+            .addText(text => {
+                text.setValue(this.value)
+
+                if (this.placeholder) {
+                    text.setPlaceholder(this.placeholder)
+                }
+
+                text.onChange(async value => {
+                    this.value = value
+                    this._onChange?.(this.value)
+                })
+            })
+    }
+
+    get placeholder(): string | null {
+        return null
+    }
+}
+
+/**
  * Text area setting for multi-line input.
  */
 export abstract class TextAreaSetting extends BaseSetting<string> {
