@@ -1,3 +1,4 @@
 // obskit - module entry point
 
-export * from './settings.js'
+export * from "./logger.js"
+export * from "./settings.js"

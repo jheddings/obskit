@@ -1,4 +1,4 @@
-import { Setting } from 'obsidian'
+import { Setting } from "obsidian"
 
 /** Configuration for a setting element. */
 interface SettingConfig {
@@ -165,7 +165,7 @@ export abstract class DropdownSetting<T> extends BaseSetting<T> {
      */
     protected getKeyForValue(value: T): string {
         const option = this.options.find(opt => opt.value === value)
-        return option?.key ?? this.options[0]?.key ?? ''
+        return option?.key ?? this.options[0]?.key ?? ""
     }
 
     /**
