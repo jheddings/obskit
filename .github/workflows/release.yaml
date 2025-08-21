@@ -33,7 +33,7 @@ jobs:
             - name: Publish NPM package
               run: npm publish
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
             - name: Create release
               run: |
