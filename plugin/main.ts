@@ -2,13 +2,13 @@
 
 import { Plugin, App, Setting } from "obsidian"
 import { Logger, LogLevel } from "../src/logger.js"
-import { 
-    SettingsTabPage, 
-    PluginSettingsTab, 
-    ToggleSetting, 
-    TextInputSetting, 
-    SliderSetting, 
-    DropdownSetting 
+import {
+    SettingsTabPage,
+    PluginSettingsTab,
+    ToggleSetting,
+    TextInputSetting,
+    SliderSetting,
+    DropdownSetting,
 } from "../src/settings.js"
 
 interface ExamplePluginSettings {
@@ -28,7 +28,7 @@ const DEFAULT_SETTINGS: ExamplePluginSettings = {
     logLevel: LogLevel.INFO,
     theme: "default",
     autoSave: false,
-    maxItems: 100
+    maxItems: 100,
 }
 
 /**
@@ -79,7 +79,7 @@ class EnableFeatureSetting extends ToggleSetting {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "Enable Feature",
-            description: "Enable or disable the main feature of this plugin."
+            description: "Enable or disable the main feature of this plugin.",
         })
     }
 
@@ -104,7 +104,7 @@ class UserNameSetting extends TextInputSetting {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "User Name",
-            description: "Enter your username for personalized features."
+            description: "Enter your username for personalized features.",
         })
     }
 
@@ -133,7 +133,7 @@ class RefreshIntervalSetting extends SliderSetting {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "Refresh Interval",
-            description: "Set the refresh interval in seconds."
+            description: "Set the refresh interval in seconds.",
         })
     }
 
@@ -170,7 +170,7 @@ class ThemeSetting extends DropdownSetting<string> {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "Theme",
-            description: "Choose your preferred theme."
+            description: "Choose your preferred theme.",
         })
     }
 
@@ -204,7 +204,7 @@ class AutoSaveSetting extends ToggleSetting {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "Auto Save",
-            description: "Automatically save changes without prompting."
+            description: "Automatically save changes without prompting.",
         })
     }
 
@@ -229,7 +229,7 @@ class MaxItemsSetting extends SliderSetting {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "Maximum Items",
-            description: "Set the maximum number of items to display."
+            description: "Set the maximum number of items to display.",
         })
     }
 
@@ -266,7 +266,7 @@ class LogLevelSetting extends DropdownSetting<LogLevel> {
     constructor(private plugin: ExamplePlugin) {
         super({
             name: "Log Level",
-            description: "Set the logging level for console output."
+            description: "Set the logging level for console output.",
         })
     }
 
@@ -339,7 +339,7 @@ class AdvancedSettings extends SettingsTabPage {
     display(containerEl: HTMLElement): void {
         // Add standard settings
         new LogLevelSetting(this.plugin).display(containerEl)
-        
+
         // Custom settings are still supported
         new Setting(containerEl)
             .setName("Reset Settings")
@@ -379,7 +379,7 @@ export class ExampleSettingsTab extends PluginSettingsTab {
         this.addTabs([
             new GeneralSettings(plugin),
             new PerformanceSettings(plugin),
-            new AdvancedSettings(plugin)
+            new AdvancedSettings(plugin),
         ])
 
         // Alternative: Add tabs individually using method chaining
