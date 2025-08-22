@@ -1,9 +1,10 @@
-import typescriptEslint from "@typescript-eslint/eslint-plugin"
-import typescriptParser from "@typescript-eslint/parser"
+const typescriptEslint = require("@typescript-eslint/eslint-plugin")
+const typescriptParser = require("@typescript-eslint/parser")
 
-export default [
+module.exports = [
     {
-        ignores: ["main.js", "dist/**", "node_modules/**", "*.d.ts", "tmp/**", "plugin/**"],
+        // ignore generated and build files
+        ignores: ["main.js", "dist/**", "node_modules/**", "*.d.ts"],
     },
     {
         files: ["**/*.ts", "**/*.tsx"],
@@ -20,6 +21,8 @@ export default [
         },
         rules: {
             semi: "off",
+            curly: ["error", "all"],
+
             "@typescript-eslint/member-delimiter-style": "off",
             "@typescript-eslint/quotes": "off",
             "@typescript-eslint/indent": "off",

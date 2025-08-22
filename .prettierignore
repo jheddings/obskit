@@ -1,7 +1,7 @@
 node_modules/
 dist/
-build/
-*.d.ts
+plugin/
 package-lock.json
 *.min.js
 *.min.css
+*.d.ts
