@@ -1,0 +1,10 @@
+{
+    "id": "obskit",
+    "name": "Obsidian Kit",
+    "version": "0.1.0",
+    "minAppVersion": "1.0.0",
+    "description": "Sample plugin for Obsidian Kit.",
+    "author": "Jason Heddings",
+    "authorUrl": "https://github.com/jheddings",
+    "isDesktopOnly": false
+}

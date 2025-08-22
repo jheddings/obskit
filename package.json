@@ -34,16 +34,13 @@
         "clean": "rm -rf dist",
         "prepublishOnly": "npm run clean && npm run build",
         "test": "npm run build",
-        "lint": "eslint src",
-        "lint:fix": "eslint src --fix",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "preflight": "npm run format && npm run lint:fix && npm test",
         "release": "npm run preflight && git push && git push --tags",
         "postversion": "git commit --amend -m \"obskit-$npm_package_version\""
-    },
-    "dependencies": {
-        "obsidian": "^1.8.7"
     },
     "devDependencies": {
         "@types/node": "^24.3.0",
@@ -51,6 +48,8 @@
         "@typescript-eslint/parser": "^8.40.0",
         "eslint": "^9.33.0",
         "husky": "^9.1.7",
+        "obsidian": "^1.8.7",
+        "tslib": "2.8.1",
         "lint-staged": "^16.1.5",
         "prettier": "^3.6.2",
         "typescript": "^5.9.2"

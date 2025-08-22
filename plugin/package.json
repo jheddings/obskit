@@ -1,0 +1,31 @@
+{
+    "name": "obskit-plugin",
+    "version": "0.0.1",
+    "description": "Sample plugin for Obsidian.",
+    "author": "Jason Heddings",
+    "license": "MIT",
+    "main": "main.js",
+    "scripts": {
+        "dev": "node esbuild.config.mjs",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "preflight": "npm run format && npm run lint:fix",
+        "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+    },
+    "keywords": [
+        "obsidian",
+        "plugin"
+    ],
+    "devDependencies": {
+        "@types/node": "^22.17.2",
+        "@typescript-eslint/eslint-plugin": "^8.40.0",
+        "@typescript-eslint/parser": "^8.40.0",
+        "builtin-modules": "5.0.0",
+        "esbuild": "0.25.9",
+        "obsidian": "^1.8.7",
+        "tslib": "2.8.1",
+        "typescript": "5.9.2"
+    }
+}
