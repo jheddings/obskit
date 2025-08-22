@@ -301,9 +301,9 @@ class LogLevelSetting extends DropdownSetting<LogLevel> {
 /**
  * General settings page with basic configuration options.
  */
-class GeneralSettings extends SettingsTabPage<ExamplePlugin> {
-    constructor(plugin: ExamplePlugin) {
-        super(plugin, "General")
+class GeneralSettings extends SettingsTabPage {
+    constructor(private plugin: ExamplePlugin) {
+        super("General")
     }
 
     display(containerEl: HTMLElement): void {
@@ -316,9 +316,9 @@ class GeneralSettings extends SettingsTabPage<ExamplePlugin> {
 /**
  * Performance settings page with performance-related options.
  */
-class PerformanceSettings extends SettingsTabPage<ExamplePlugin> {
-    constructor(plugin: ExamplePlugin) {
-        super(plugin, "Performance")
+class PerformanceSettings extends SettingsTabPage {
+    constructor(private plugin: ExamplePlugin) {
+        super("Performance")
     }
 
     display(containerEl: HTMLElement): void {
@@ -331,9 +331,9 @@ class PerformanceSettings extends SettingsTabPage<ExamplePlugin> {
 /**
  * Advanced settings page with developer and debugging options.
  */
-class AdvancedSettings extends SettingsTabPage<ExamplePlugin> {
-    constructor(plugin: ExamplePlugin) {
-        super(plugin, "Advanced")
+class AdvancedSettings extends SettingsTabPage {
+    constructor(private plugin: ExamplePlugin) {
+        super("Advanced")
     }
 
     display(containerEl: HTMLElement): void {
