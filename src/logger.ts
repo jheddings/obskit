@@ -33,7 +33,7 @@ export class Logger {
     }
 
     log(level: string, message: string, ...args: any[]): void {
-        console.log(`[${level}] chopro:${this._name} -- ${message}`, ...args)
+        console.log(`[${level}] ${this._name} -- ${message}`, ...args)
     }
 
     debug(message: string, ...args: any[]): void {
