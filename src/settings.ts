@@ -1,4 +1,5 @@
 import { Plugin, Setting, PluginSettingTab, App } from "obsidian"
+import { Logger } from "./logger"
 
 /** Configuration for a setting element. */
 interface SettingConfig {
@@ -107,7 +108,7 @@ export abstract class TextInputSetting extends BaseSetting<string> {
     }
 
     get placeholder(): string | null {
-        return null
+        return this.default
     }
 }
 
@@ -134,7 +135,7 @@ export abstract class TextAreaSetting extends BaseSetting<string> {
     }
 
     get placeholder(): string | null {
-        return null
+        return this.default
     }
 }
 
@@ -240,24 +241,21 @@ export abstract class SettingsTabPage<T extends Plugin = Plugin> {
 export abstract class PluginSettingsTab extends PluginSettingTab {
     private tabs: SettingsTabPage[] = []
     private activeTab: SettingsTabPage | null = null
+
     private tabContainer: HTMLElement | null = null
     private contentContainer: HTMLElement | null = null
 
+    private logger: Logger = Logger.getLogger("settings")
+
     constructor(app: App, plugin: Plugin) {
         super(app, plugin)
-        this.initializeTabs()
     }
-
-    /**
-     * Initialize the tabs for this settings tab.
-     * Override this method to add your tab pages.
-     */
-    protected abstract initializeTabs(): void
 
     /**
      * Add a single tab page to the settings tab.
      */
     protected addTab(tab: SettingsTabPage): PluginSettingsTab {
+        this.logger.debug(`Adding tab to: ${tab.name}`)
         this.tabs.push(tab)
         return this
     }
@@ -271,13 +269,6 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
     }
 
     /**
-     * Get all registered tabs.
-     */
-    protected getTabs(): SettingsTabPage[] {
-        return [...this.tabs]
-    }
-
-    /**
      * Get the currently active tab.
      */
     protected getActiveTab(): SettingsTabPage | null {
@@ -288,6 +279,8 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
      * Set the active tab by index.
      */
     protected setActiveTab(index: number): PluginSettingsTab {
+        this.logger.debug(`Setting active tab to: ${index}`)
+
         if (index >= 0 && index < this.tabs.length) {
             const tab = this.tabs[index]
             if (tab) {
@@ -301,6 +294,8 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
      * Set the active tab by ID.
      */
     protected setActiveTabById(id: string): PluginSettingsTab {
+        this.logger.debug(`Setting active tab to: ${id}`)
+
         const tab = this.tabs.find(t => t.id === id)
         if (tab) {
             this.activateTab(tab)
@@ -312,6 +307,8 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
      * Activates a specific tab.
      */
     private activateTab(tab: SettingsTabPage): PluginSettingsTab {
+        this.logger.debug(`Activating tab: ${tab.name} [${tab.id}]`)
+
         if (this.activeTab) {
             this.activeTab.isActive = false
             this.activeTab.onDeactivate()
