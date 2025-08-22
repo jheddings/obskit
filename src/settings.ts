@@ -184,17 +184,15 @@ export abstract class DropdownSetting<T> extends BaseSetting<T> {
 /**
  * Base class for settings tab pages.
  */
-export abstract class SettingsTabPage<T extends Plugin = Plugin> {
+export abstract class SettingsTabPage {
     public isActive: boolean = false
 
-    protected plugin: T
     private _name: string
 
     /**
      * Creates a new SettingsTabPage instance.
      */
-    constructor(plugin: T, name: string) {
-        this.plugin = plugin
+    constructor(name: string) {
         this._name = name
     }
 
