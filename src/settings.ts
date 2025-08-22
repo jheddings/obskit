@@ -186,14 +186,14 @@ export abstract class DropdownSetting<T> extends BaseSetting<T> {
 export abstract class SettingsTabPage<T extends Plugin = Plugin> {
     public isActive: boolean = false
 
-    protected _plugin: T
-    protected _name: string
+    protected plugin: T
+    private _name: string
 
     /**
      * Creates a new SettingsTabPage instance.
      */
     constructor(plugin: T, name: string) {
-        this._plugin = plugin
+        this.plugin = plugin
         this._name = name
     }
 
@@ -209,13 +209,6 @@ export abstract class SettingsTabPage<T extends Plugin = Plugin> {
      */
     get name(): string {
         return this._name
-    }
-
-    /**
-     * Gets the plugin instance.
-     */
-    get plugin(): T {
-        return this._plugin
     }
 
     /**
@@ -242,103 +235,115 @@ export abstract class SettingsTabPage<T extends Plugin = Plugin> {
 }
 
 /**
- * Manages a collection of settings tab pages and handles tab switching.
+ * Base class for plugin settings tabs that provides built-in tab functionality.
  */
-export class SettingsTabManager {
+export abstract class PluginSettingsTab extends PluginSettingTab {
     private tabs: SettingsTabPage[] = []
     private activeTab: SettingsTabPage | null = null
     private tabContainer: HTMLElement | null = null
     private contentContainer: HTMLElement | null = null
 
+    constructor(app: App, plugin: Plugin) {
+        super(app, plugin)
+        this.initializeTabs()
+    }
+
     /**
-     * Adds a tab page to the manager.
+     * Initialize the tabs for this settings tab.
+     * Override this method to add your tab pages.
      */
-    addTab(tab: SettingsTabPage): SettingsTabManager {
+    protected abstract initializeTabs(): void
+
+    /**
+     * Add a single tab page to the settings tab.
+     */
+    protected addTab(tab: SettingsTabPage): PluginSettingsTab {
         this.tabs.push(tab)
         return this
     }
 
     /**
-     * Adds multiple tab pages to the manager.
+     * Add multiple tab pages to the settings tab.
      */
-    addTabs(tabs: SettingsTabPage[]): SettingsTabManager {
-        this.tabs.push(...tabs)
+    protected addTabs(tabs: SettingsTabPage[]): PluginSettingsTab {
+        tabs.forEach(tab => this.tabs.push(tab))
         return this
     }
 
     /**
-     * Gets all registered tabs.
+     * Get all registered tabs.
      */
-    getTabs(): SettingsTabPage[] {
+    protected getTabs(): SettingsTabPage[] {
         return [...this.tabs]
     }
 
     /**
-     * Gets the currently active tab.
+     * Get the currently active tab.
      */
-    getActiveTab(): SettingsTabPage | null {
+    protected getActiveTab(): SettingsTabPage | null {
         return this.activeTab
     }
 
     /**
-     * Sets the active tab by index.
+     * Set the active tab by index.
      */
-    setActiveTab(index: number): void {
+    protected setActiveTab(index: number): PluginSettingsTab {
         if (index >= 0 && index < this.tabs.length) {
             const tab = this.tabs[index]
             if (tab) {
                 this.activateTab(tab)
             }
         }
+        return this
     }
 
     /**
-     * Sets the active tab by ID.
+     * Set the active tab by ID.
      */
-    setActiveTabById(id: string): void {
+    protected setActiveTabById(id: string): PluginSettingsTab {
         const tab = this.tabs.find(t => t.id === id)
         if (tab) {
             this.activateTab(tab)
         }
+        return this
     }
 
     /**
      * Activates a specific tab.
      */
-    private activateTab(tab: SettingsTabPage): void {
-        // Deactivate current tab
+    private activateTab(tab: SettingsTabPage): PluginSettingsTab {
         if (this.activeTab) {
             this.activeTab.isActive = false
             this.activeTab.onDeactivate()
         }
 
-        // Activate new tab
         this.activeTab = tab
         tab.isActive = true
         tab.onActivate()
 
-        // Update UI
         this.updateTabButtonStyles()
         this.displayActiveTabContent()
+
+        return this
     }
 
     /**
-     * Displays the tab manager UI in the provided container.
+     * Display the settings tab UI.
      */
-    display(containerEl: HTMLElement): void {
+    display(): void {
+        this.containerEl.empty()
+
         if (this.tabs.length === 0) {
-            throw new Error("No tabs have been added to the manager")
+            throw new Error("No tabs have been added to the settings tab")
         }
 
-        containerEl.empty()
-
         // Create tab container
-        this.tabContainer = containerEl.createEl("div", {
+        this.tabContainer = this.containerEl.createEl("div", {
             cls: "obskit-settings-tab-container",
         })
 
         // Create content container
-        this.contentContainer = containerEl.createEl("div", {
+        this.contentContainer = this.containerEl.createEl("div", {
             cls: "obskit-settings-tab-content",
         })
 
@@ -392,40 +397,12 @@ export class SettingsTabManager {
         this.contentContainer.empty()
         this.activeTab.display(this.contentContainer)
     }
-}
-
-/**
- * Base class for plugin settings tabs that provides tab functionality.
- * Extends Obsidian's PluginSettingTab and integrates with SettingsTabManager.
- */
-export abstract class PluginSettingsTab extends PluginSettingTab {
-    protected tabManager: SettingsTabManager
-
-    constructor(app: App, plugin: Plugin) {
-        super(app, plugin)
-        this.tabManager = new SettingsTabManager()
-        this.initializeTabs()
-    }
-
-    /**
-     * Initialize the tabs for this settings tab.
-     * Override this method to add your tab pages.
-     */
-    protected abstract initializeTabs(): void
-
-    /**
-     * Display the settings tab UI.
-     */
-    display(): void {
-        this.tabManager.display(this.containerEl)
-    }
 
     /**
      * Hide the settings tab UI.
      */
     hide(): void {
-        // Clean up any active tab
-        const activeTab = this.tabManager.getActiveTab()
+        const activeTab = this.getActiveTab()
         if (activeTab) {
             activeTab.isActive = false
             activeTab.onDeactivate()
