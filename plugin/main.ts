@@ -85,18 +85,10 @@ class EnableFeatureSetting extends ToggleSetting {
     }
 
     get value(): boolean {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in EnableFeatureSetting")
-            return this.default
-        }
         return this.plugin.settings.enableFeature
     }
 
     set value(val: boolean) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in EnableFeatureSetting")
-            return
-        }
         this.plugin.settings.enableFeature = val
         this.plugin.saveSettings()
     }
@@ -118,18 +110,10 @@ class UserNameSetting extends TextInputSetting {
     }
 
     get value(): string {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in UserNameSetting")
-            return this.default
-        }
         return this.plugin.settings.userName
     }
 
     set value(val: string) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in UserNameSetting")
-            return
-        }
         this.plugin.settings.userName = val
         this.plugin.saveSettings()
     }
@@ -155,18 +139,10 @@ class RefreshIntervalSetting extends SliderSetting {
     }
 
     get value(): number {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in RefreshIntervalSetting")
-            return this.default
-        }
         return this.plugin.settings.refreshInterval
     }
 
     set value(val: number) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in RefreshIntervalSetting")
-            return
-        }
         this.plugin.settings.refreshInterval = val
         this.plugin.saveSettings()
     }
@@ -200,18 +176,10 @@ class ThemeSetting extends DropdownSetting<string> {
     }
 
     get value(): string {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in ThemeSetting")
-            return this.default
-        }
         return this.plugin.settings.theme
     }
 
     set value(val: string) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in ThemeSetting")
-            return
-        }
         this.plugin.settings.theme = val
         this.plugin.saveSettings()
     }
@@ -242,18 +210,10 @@ class AutoSaveSetting extends ToggleSetting {
     }
 
     get value(): boolean {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in AutoSaveSetting")
-            return this.default
-        }
         return this.plugin.settings.autoSave
     }
 
     set value(val: boolean) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in AutoSaveSetting")
-            return
-        }
         this.plugin.settings.autoSave = val
         this.plugin.saveSettings()
     }
@@ -275,18 +235,10 @@ class MaxItemsSetting extends SliderSetting {
     }
 
     get value(): number {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in MaxItemsSetting")
-            return this.default
-        }
         return this.plugin.settings.maxItems
     }
 
     set value(val: number) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in MaxItemsSetting")
-            return
-        }
         this.plugin.settings.maxItems = val
         this.plugin.saveSettings()
     }
@@ -320,18 +272,10 @@ class LogLevelSetting extends DropdownSetting<LogLevel> {
     }
 
     get value(): LogLevel {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in LogLevelSetting")
-            return this.default
-        }
         return this.plugin.settings.logLevel
     }
 
     set value(val: LogLevel) {
-        if (!this.plugin || !this.plugin.settings) {
-            console.warn("Plugin or settings not initialized in LogLevelSetting")
-            return
-        }
         this.plugin.settings.logLevel = val
         this.plugin.saveSettings()
     }
