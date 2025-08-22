@@ -1,1 +1,27 @@
 /* Obsidian Kit Plugin Styles */
+
+.obskit-settings-tab-container {
+    display: flex;
+    border-bottom: 1px solid var(--background-modifier-border);
+    margin-bottom: 20px;
+}
+
+.obskit-settings-tab-button {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-normal);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.obskit-settings-tab-button:hover {
+    background: var(--background-modifier-hover);
+}
+
+.obskit-settings-tab-button-active {
+    color: var(--text-accent);
+    border-bottom-color: var(--interactive-accent);
+    background: var(--background-modifier-active-hover);
+}
