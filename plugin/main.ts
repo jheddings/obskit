@@ -11,7 +11,6 @@ import {
     DropdownSetting 
 } from "../src/settings.js"
 
-// Example plugin settings interface
 interface ExamplePluginSettings {
     enableFeature: boolean
     userName: string
@@ -43,7 +42,7 @@ export default class ExamplePlugin extends Plugin {
     async onload() {
         await this.loadSettings()
 
-        this.addSettingTab(new ExampleSettingTab(this.app, this))
+        this.addSettingTab(new ExampleSettingsTab(this.app, this))
 
         this.logger.info("Plugin loaded")
     }
@@ -295,6 +294,10 @@ class LogLevelSetting extends DropdownSetting<LogLevel> {
     }
 }
 
+// ============================================================================
+// SETTINGS PAGES
+// ============================================================================
+
 /**
  * General settings page with basic configuration options.
  */
@@ -346,9 +349,8 @@ class AdvancedSettings extends SettingsTabPage<ExamplePlugin> {
                 button.setWarning()
                 button.onClick(async () => {
                     if (confirm("Are you sure you want to reset all settings?")) {
-                        await this.plugin.loadSettings()
+                        this.plugin.settings = Object.assign({}, DEFAULT_SETTINGS)
                         this.plugin.saveSettings()
-                        this.display(containerEl)
                     }
                 })
             })
@@ -370,22 +372,14 @@ class AdvancedSettings extends SettingsTabPage<ExamplePlugin> {
 /**
  * Main settings tab that uses the framework.
  */
-export class ExampleSettingTab extends PluginSettingsTab {
-    private examplePlugin: ExamplePlugin
-
+export class ExampleSettingsTab extends PluginSettingsTab {
     constructor(app: App, plugin: ExamplePlugin) {
         super(app, plugin)
-        this.examplePlugin = plugin
-    }
 
-    /**
-     * Initialize the tabs for this settings tab.
-     */
-    protected initializeTabs(): void {
         this.addTabs([
-            new GeneralSettings(this.examplePlugin),
-            new PerformanceSettings(this.examplePlugin),
-            new AdvancedSettings(this.examplePlugin)
+            new GeneralSettings(plugin),
+            new PerformanceSettings(plugin),
+            new AdvancedSettings(plugin)
         ])
 
         // Alternative: Add tabs individually using method chaining
