@@ -11,6 +11,8 @@
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "clean": "rm -f main.js",
+        "clobber": "npm run clean && rm -Rf node_modules",
         "preflight": "npm run format && npm run lint:fix",
         "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
     },
