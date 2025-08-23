@@ -31,6 +31,7 @@
         "build": "tsc",
         "dev": "tsc --watch",
         "clean": "rm -rf dist",
+        "clobber": "npm run clean && rm -rf node_modules",
         "prepublishOnly": "npm run clean && npm run build",
         "test": "npm run build",
         "lint": "eslint .",
