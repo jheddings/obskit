@@ -212,13 +212,11 @@ export abstract class SettingsTabPage {
 
     /**
      * Display the settings page content.
-     * Override this method to implement the page content.
      */
     abstract display(containerEl: HTMLElement): void
 
     /**
      * Called when the tab becomes active.
-     * Override this method to perform any initialization when the tab is shown.
      */
     onActivate(): void {
         // Override in subclasses if needed
@@ -226,7 +224,6 @@ export abstract class SettingsTabPage {
 
     /**
      * Called when the tab becomes inactive.
-     * Override this method to perform any cleanup when the tab is hidden.
      */
     onDeactivate(): void {
         // Override in subclasses if needed
@@ -307,10 +304,7 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
     private activateTab(tab: SettingsTabPage): PluginSettingsTab {
         this.logger.debug(`Activating tab: ${tab.name} [${tab.id}]`)
 
-        if (this.activeTab) {
-            this.activeTab.isActive = false
-            this.activeTab.onDeactivate()
-        }
+        this.deactivateActiveTab()
 
         this.activeTab = tab
         tab.isActive = true
@@ -332,17 +326,14 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
             throw new Error("No tabs have been added to the settings tab")
         }
 
-        // Create tab container
         this.tabContainer = this.containerEl.createEl("div", {
             cls: "obskit-settings-tab-container",
         })
 
-        // Create content container
         this.contentContainer = this.containerEl.createEl("div", {
             cls: "obskit-settings-tab-content",
         })
 
-        // Create tab buttons
         this.tabs.forEach((tab, _index) => {
             const tabEl = this.tabContainer!.createEl("button", {
                 text: tab.name,
@@ -354,7 +345,7 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
             })
         })
 
-        // Activate first tab by default
+        // activate first tab by default
         if (this.tabs.length > 0) {
             const firstTab = this.tabs[0]
             if (firstTab) {
@@ -397,6 +388,13 @@ export abstract class PluginSettingsTab extends PluginSettingTab {
      * Hide the settings tab UI.
      */
     hide(): void {
+        this.deactivateActiveTab()
+    }
+
+    /**
+     * Deactivate the currently active tab.
+     */
+    private deactivateActiveTab(): void {
         const activeTab = this.getActiveTab()
         if (activeTab) {
             activeTab.isActive = false
