@@ -3,9 +3,9 @@
         "rootDir": "./src",
         "outDir": "./dist",
 
-        "module": "ES2022",
+        "module": "CommonJS",
         "target": "ES2020",
-        "moduleResolution": "bundler",
+        "moduleResolution": "node",
         "types": [],
 
         "sourceMap": true,
@@ -17,9 +17,7 @@
 
         "strict": true,
         "jsx": "react-jsx",
-        "verbatimModuleSyntax": true,
         "isolatedModules": true,
-        "noUncheckedSideEffectImports": true,
         "moduleDetection": "force",
         "skipLibCheck": true
     },

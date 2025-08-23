@@ -32,28 +32,33 @@ export class Logger {
         return level <= this._logLevel
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     log(level: string, message: string, ...args: any[]): void {
         console.log(`[${level}] ${this._name} -- ${message}`, ...args)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debug(message: string, ...args: any[]): void {
         if (this.shouldLog(LogLevel.DEBUG)) {
             this.log("DEBUG", message, ...args)
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     info(message: string, ...args: any[]): void {
         if (this.shouldLog(LogLevel.INFO)) {
             this.log("INFO", message, ...args)
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     warn(message: string, ...args: any[]): void {
         if (this.shouldLog(LogLevel.WARN)) {
             this.log("WARN", message, ...args)
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error(message: string, ...args: any[]): void {
         if (this.shouldLog(LogLevel.ERROR)) {
             this.log("ERROR", message, ...args)

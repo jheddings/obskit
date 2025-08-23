@@ -10,7 +10,7 @@ export default [
         languageOptions: {
             parser: typescriptParser,
             ecmaVersion: 2021,
-            sourceType: "module",
+            sourceType: "script",
             parserOptions: {
                 project: "./tsconfig.json",
             },
@@ -34,7 +34,7 @@ export default [
         files: ["**/*.js", "**/*.jsx"],
         languageOptions: {
             ecmaVersion: 2021,
-            sourceType: "module",
+            sourceType: "script",
         },
         rules: {
             semi: "off",
