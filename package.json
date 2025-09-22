@@ -1,6 +1,6 @@
 {
     "name": "obskit",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "description": "Utilities and helpers for building Obsidian plugins.",
     "keywords": [
         "obsidian"
