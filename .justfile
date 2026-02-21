@@ -34,7 +34,7 @@ repo-guard:
 release bump="patch": preflight repo-guard
 	#!/usr/bin/env bash
 	npm version {{bump}} --no-git-tag-version
-	VERSION=$(node -p "require('./package.json').version")
+	VERSION=$(jq -r '.version' package.json)
 	npx prettier --write package.json package-lock.json
 	git add package.json package-lock.json
 	git commit -m "obskit-$VERSION"
