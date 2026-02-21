@@ -31,18 +31,7 @@
     "scripts": {
         "prepare": "husky",
         "build": "tsc",
-        "dev": "tsc --watch",
-        "clean": "rm -rf dist",
-        "clobber": "npm run clean && rm -rf node_modules",
-        "prepublishOnly": "npm run clean && npm run build",
-        "test": "npm run build",
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
-        "preflight": "npm run format && npm run lint:fix && npm test",
-        "release": "npm run preflight && git push && git push --tags",
-        "postversion": "git commit --amend -m \"obskit-$npm_package_version\""
+        "dev": "tsc --watch"
     },
     "peerDependencies": {
         "obsidian": "^1.12.2"
