@@ -1,0 +1,50 @@
+# justfile for obskit
+
+# run setup and preflight checks
+default: setup preflight
+
+# setup the local development environment
+setup:
+	npm install
+
+# auto-format and lint-fix
+tidy:
+	npx prettier --write .
+	npx eslint src --fix
+
+# run format and lint checks (no fix)
+check:
+	npx prettier --check .
+	npx eslint src
+
+# full preflight: build + check
+preflight: build
+	npx prettier --check .
+	npx eslint src
+
+# build the library
+build:
+	npm run build
+
+# verify no uncommitted changes to tracked files
+repo-guard:
+	test -z "$(git status --porcelain -uno)" || (echo "ERROR: working tree is dirty"; exit 1)
+
+# bump version, commit, tag, and push
+release bump="patch": preflight repo-guard
+	#!/usr/bin/env bash
+	npm version {{bump}} --no-git-tag-version
+	VERSION=$(jq -r '.version' package.json)
+	npx prettier --write package.json package-lock.json
+	git add package.json package-lock.json
+	git commit -m "obskit-$VERSION"
+	git tag -a "v$VERSION" -m "v$VERSION"
+	git push && git push --tags
+
+# remove build artifacts
+clean:
+	rm -rf dist
+
+# remove everything including dependencies
+clobber: clean
+	rm -rf node_modules
