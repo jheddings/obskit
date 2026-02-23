@@ -50,6 +50,7 @@ const config = new PluginConfig<MySettings>({
 **Methods:**
 
 - `async load(plugin: Plugin): Promise<T>` — loads, migrates, deep merges, returns typed settings
+- `async save(plugin: Plugin, settings: T): Promise<void>` — saves settings with version key preserved
 
 ### deepMerge
 
@@ -81,7 +82,7 @@ export default class ExamplePlugin extends Plugin {
     }
 
     async saveSettings() {
-        await this.saveData(this.settings)
+        await config.save(this, this.settings)
     }
 }
 ```
