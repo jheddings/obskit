@@ -17,8 +17,12 @@ check:
 	npx prettier --check .
 	npx eslint src
 
-# full preflight: build + check
-preflight: build
+# run tests
+test:
+	npm test
+
+# full preflight: build + test + check
+preflight: build test
 	npx prettier --check .
 	npx eslint src
 
