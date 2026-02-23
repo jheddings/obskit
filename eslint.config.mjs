@@ -12,7 +12,7 @@ export default [
             ecmaVersion: 2021,
             sourceType: "script",
             parserOptions: {
-                project: "./tsconfig.json",
+                project: "./tsconfig.eslint.json",
             },
         },
         plugins: {
