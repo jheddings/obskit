@@ -95,6 +95,11 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  * Deep merge two objects. Values from `saved` take precedence.
  * Nested objects are recursively merged. Arrays are treated as atomic.
  * Only truly missing keys in `saved` are filled from `defaults`.
+ *
+ * Note: We use a custom implementation rather than ts-deepmerge (or similar)
+ * because those libraries fail on objects created via structuredClone in
+ * Jest's sandboxed VM context. Our isPlainObject check avoids constructor
+ * identity comparisons, making it cross-realm safe.
  */
 export function deepMerge<T extends Record<string, unknown>>(defaults: T, saved: Partial<T>): T {
     const result: Record<string, unknown> = {}
