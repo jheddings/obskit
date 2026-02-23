@@ -12,3 +12,5 @@ dist
 *.swp
 *~
 tmp
+
+settings.local.json

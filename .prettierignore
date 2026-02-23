@@ -5,3 +5,5 @@ package-lock.json
 *.min.js
 *.min.css
 *.d.ts
+
+settings.local.json
