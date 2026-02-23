@@ -1,3 +1,73 @@
+import { Plugin } from "obsidian"
+
+import { Logger } from "./logger"
+
+const VERSION_KEY = "__obskit_config_version__"
+
+/** Migration function that mutates raw settings data in place. */
+export type Migration = (data: Record<string, unknown>) => void
+
+/** Options for creating a PluginConfig. */
+export interface PluginConfigOptions<T> {
+    /** The full default settings object. */
+    defaults: T
+    /** Optional ordered migration functions for breaking schema changes. */
+    migrations?: Migration[]
+}
+
+/**
+ * Manages plugin settings with automatic deep merging and versioned migrations.
+ */
+export class PluginConfig<T extends Record<string, unknown>> {
+    private defaults: T
+    private migrations: Migration[]
+    private logger: Logger = Logger.getLogger("config")
+
+    constructor(options: PluginConfigOptions<T>) {
+        this.defaults = options.defaults
+        this.migrations = options.migrations ?? []
+    }
+
+    /**
+     * Load settings from the plugin's data store.
+     *
+     * Runs pending migrations, deep merges with defaults, and optionally
+     * saves back if migrations were applied.
+     */
+    async load(plugin: Plugin): Promise<T> {
+        const raw = (await plugin.loadData()) as Record<string, unknown> | null
+        const saved = raw ?? {}
+
+        // Determine current version
+        const version = typeof saved[VERSION_KEY] === "number" ? (saved[VERSION_KEY] as number) : 0
+
+        // Run pending migrations
+        const migrated = version < this.migrations.length
+        for (let i = version; i < this.migrations.length; i++) {
+            this.logger.debug(`Running migration ${i}`)
+            const migration = this.migrations[i]
+            if (migration) {
+                migration(saved)
+            }
+        }
+
+        // Remove version key before merge so it doesn't leak into typed result
+        delete saved[VERSION_KEY]
+
+        // Deep merge defaults with saved data
+        const result = deepMerge(this.defaults, saved as Partial<T>)
+
+        // Save back if migrations ran or first run
+        if (migrated || raw === null) {
+            const toSave = { ...result, [VERSION_KEY]: this.migrations.length }
+            await plugin.saveData(toSave)
+            this.logger.debug(`Settings saved (version ${this.migrations.length})`)
+        }
+
+        return result
+    }
+}
+
 /**
  * Check if a value is a plain object (not an array, null, Date, etc.).
  */

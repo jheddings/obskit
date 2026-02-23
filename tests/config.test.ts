@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals"
-import { deepMerge } from "../src/config"
+import { deepMerge, PluginConfig } from "../src/config"
 
 describe("deepMerge", () => {
     it("returns defaults when saved is empty", () => {
@@ -62,5 +62,216 @@ describe("deepMerge", () => {
         const saved = { rendering: { color: "red" } }
         deepMerge(defaults, saved)
         expect(saved).toEqual({ rendering: { color: "red" } })
+    })
+})
+
+// Mock Plugin — simulates Obsidian's loadData/saveData
+function createMockPlugin(data: Record<string, unknown> | null = null) {
+    let stored = data
+    return {
+        loadData: async () => structuredClone(stored),
+        saveData: async (d: Record<string, unknown>) => {
+            stored = structuredClone(d)
+        },
+        getSavedData: () => stored,
+    }
+}
+
+interface TestSettings {
+    name: string
+    count: number
+    nested: { enabled: boolean; color: string }
+}
+
+const TEST_DEFAULTS: TestSettings = {
+    name: "default",
+    count: 10,
+    nested: { enabled: true, color: "blue" },
+}
+
+describe("PluginConfig", () => {
+    it("returns defaults on first run (null data)", async () => {
+        const mock = createMockPlugin(null)
+        const config = new PluginConfig<TestSettings>({ defaults: TEST_DEFAULTS })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect(result).toEqual(TEST_DEFAULTS)
+    })
+
+    it("writes defaults and version to disk on first run", async () => {
+        const mock = createMockPlugin(null)
+        const config = new PluginConfig<TestSettings>({ defaults: TEST_DEFAULTS })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await config.load(mock as any)
+        const saved = mock.getSavedData()
+        expect(saved).toMatchObject({ ...TEST_DEFAULTS, __obskit_config_version__: 0 })
+    })
+
+    it("deep merges existing data with defaults", async () => {
+        const mock = createMockPlugin({
+            __obskit_config_version__: 0,
+            name: "custom",
+            count: 42,
+            nested: { enabled: false },
+        })
+        const config = new PluginConfig<TestSettings>({ defaults: TEST_DEFAULTS })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect(result).toEqual({
+            name: "custom",
+            count: 42,
+            nested: { enabled: false, color: "blue" },
+        })
+    })
+
+    it("does not save back when no migrations ran", async () => {
+        const mock = createMockPlugin({
+            __obskit_config_version__: 0,
+            name: "custom",
+            count: 42,
+            nested: { enabled: false, color: "red" },
+        })
+        const config = new PluginConfig<TestSettings>({ defaults: TEST_DEFAULTS })
+        let saveCalled = false
+        mock.saveData = async () => {
+            saveCalled = true
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await config.load(mock as any)
+        expect(saveCalled).toBe(false)
+    })
+
+    it("runs pending migrations in order", async () => {
+        const order: number[] = []
+        const mock = createMockPlugin({
+            __obskit_config_version__: 0,
+            name: "old",
+            count: 10,
+            nested: { enabled: true, color: "blue" },
+        })
+        const config = new PluginConfig<TestSettings>({
+            defaults: TEST_DEFAULTS,
+            migrations: [
+                data => {
+                    order.push(0)
+                    data.name = "migrated-0"
+                },
+                data => {
+                    order.push(1)
+                    data.name = "migrated-1"
+                },
+            ],
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect(order).toEqual([0, 1])
+        expect(result.name).toBe("migrated-1")
+    })
+
+    it("skips already-applied migrations", async () => {
+        const mock = createMockPlugin({
+            __obskit_config_version__: 1,
+            name: "already-migrated",
+            count: 10,
+            nested: { enabled: true, color: "blue" },
+        })
+        const config = new PluginConfig<TestSettings>({
+            defaults: TEST_DEFAULTS,
+            migrations: [
+                data => {
+                    data.name = "should-not-run"
+                },
+                data => {
+                    data.name = "should-run"
+                },
+            ],
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect(result.name).toBe("should-run")
+    })
+
+    it("saves back with updated version after migrations", async () => {
+        const mock = createMockPlugin({
+            __obskit_config_version__: 0,
+            name: "old",
+            count: 10,
+            nested: { enabled: true, color: "blue" },
+        })
+        const config = new PluginConfig<TestSettings>({
+            defaults: TEST_DEFAULTS,
+            migrations: [
+                data => {
+                    data.name = "migrated"
+                },
+            ],
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await config.load(mock as any)
+        const saved = mock.getSavedData()
+        expect(saved).toMatchObject({ __obskit_config_version__: 1, name: "migrated" })
+    })
+
+    it("treats missing version field as version 0", async () => {
+        const mock = createMockPlugin({
+            name: "pre-obskit",
+            count: 5,
+            nested: { enabled: false, color: "green" },
+        })
+        const config = new PluginConfig<TestSettings>({
+            defaults: TEST_DEFAULTS,
+            migrations: [
+                data => {
+                    data.name = "migrated-from-zero"
+                },
+            ],
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect(result.name).toBe("migrated-from-zero")
+    })
+
+    it("deep merges after migrations fill in new defaults", async () => {
+        interface V2Settings {
+            name: string
+            count: number
+            nested: { enabled: boolean; color: string; size: number }
+        }
+        const v2Defaults: V2Settings = {
+            name: "default",
+            count: 10,
+            nested: { enabled: true, color: "blue", size: 12 },
+        }
+        const mock = createMockPlugin({
+            __obskit_config_version__: 0,
+            name: "custom",
+            count: 42,
+            nested: { enabled: false, color: "red" },
+        })
+        const config = new PluginConfig<V2Settings>({
+            defaults: v2Defaults,
+            migrations: [
+                () => {
+                    /* migration exists but doesn't touch nested.size */
+                },
+            ],
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect(result.nested.size).toBe(12)
+        expect(result.nested.color).toBe("red")
+    })
+
+    it("strips __obskit_config_version__ from returned settings", async () => {
+        const mock = createMockPlugin({
+            __obskit_config_version__: 0,
+            name: "test",
+            count: 1,
+            nested: { enabled: true, color: "blue" },
+        })
+        const config = new PluginConfig<TestSettings>({ defaults: TEST_DEFAULTS })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+        expect("__obskit_config_version__" in result).toBe(false)
     })
 })
