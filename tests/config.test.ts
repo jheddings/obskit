@@ -274,4 +274,56 @@ describe("PluginConfig", () => {
         const result = await config.load(mock as any)
         expect("__obskit_config_version__" in result).toBe(false)
     })
+
+    it("save() persists settings with version key", async () => {
+        const mock = createMockPlugin(null)
+        const config = new PluginConfig<TestSettings>({
+            defaults: TEST_DEFAULTS,
+            migrations: [
+                data => {
+                    data.name = "migrated"
+                },
+            ],
+        })
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await config.load(mock as any)
+
+        // Simulate user changing a setting and saving
+        const settings = { ...TEST_DEFAULTS, name: "user-changed" }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await config.save(mock as any, settings)
+
+        const saved = mock.getSavedData()
+        expect(saved).toMatchObject({
+            name: "user-changed",
+            __obskit_config_version__: 1,
+        })
+    })
+
+    it("save() preserves version across load/save cycle", async () => {
+        const mock = createMockPlugin(null)
+        const config = new PluginConfig<TestSettings>({
+            defaults: TEST_DEFAULTS,
+            migrations: [
+                data => {
+                    data.name = "migrated"
+                },
+            ],
+        })
+
+        // First load — runs migration
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await config.load(mock as any)
+
+        // Save with user changes
+        result.name = "user-changed"
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await config.save(mock as any, result)
+
+        // Second load — should NOT re-run migrations
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result2 = await config.load(mock as any)
+        expect(result2.name).toBe("user-changed") // NOT "migrated"
+    })
 })

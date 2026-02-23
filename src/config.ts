@@ -66,6 +66,16 @@ export class PluginConfig<T extends Record<string, unknown>> {
 
         return result
     }
+
+    /**
+     * Save settings to the plugin's data store.
+     *
+     * Re-attaches the version key so migrations are tracked correctly.
+     */
+    async save(plugin: Plugin, settings: T): Promise<void> {
+        const toSave = { ...settings, [VERSION_KEY]: this.migrations.length }
+        await plugin.saveData(toSave)
+    }
 }
 
 /**
