@@ -1,6 +1,7 @@
 // main.ts - main entry point for Obsidian Kit plugin
 
 import { Plugin, App, Setting } from "obsidian"
+import { PluginConfig } from "../src/config.js"
 import { Logger, LogLevel } from "../src/logger.js"
 import {
     SettingsTabPage,
@@ -13,7 +14,7 @@ import {
 
 interface ExamplePluginSettings {
     enableFeature: boolean
-    userName: string
+    displayName: string
     refreshInterval: number
     logLevel: LogLevel
     theme: string
@@ -23,13 +24,26 @@ interface ExamplePluginSettings {
 
 const DEFAULT_SETTINGS: ExamplePluginSettings = {
     enableFeature: true,
-    userName: "",
+    displayName: "",
     refreshInterval: 30,
     logLevel: LogLevel.INFO,
     theme: "default",
     autoSave: false,
     maxItems: 100,
 }
+
+const config = new PluginConfig<ExamplePluginSettings>({
+    defaults: DEFAULT_SETTINGS,
+    migrations: [
+        // v0->v1: renamed userName to displayName
+        data => {
+            if ("userName" in data) {
+                data.displayName = data.userName
+                delete data.userName
+            }
+        },
+    ],
+})
 
 /**
  * Example plugin class
@@ -52,14 +66,12 @@ export default class ExamplePlugin extends Plugin {
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
-
+        this.settings = await config.load(this)
         this.applySettings()
     }
 
     async saveSettings() {
-        await this.saveData(this.settings)
-
+        await config.save(this, this.settings)
         this.applySettings()
     }
 
@@ -98,22 +110,22 @@ class EnableFeatureSetting extends ToggleSetting {
 }
 
 /**
- * Text input setting for user name.
+ * Text input setting for display name.
  */
-class UserNameSetting extends TextInputSetting {
+class DisplayNameSetting extends TextInputSetting {
     constructor(private plugin: ExamplePlugin) {
         super({
-            name: "User Name",
-            description: "Enter your username for personalized features.",
+            name: "Display Name",
+            description: "Enter your display name for personalized features.",
         })
     }
 
     get value(): string {
-        return this.plugin.settings.userName
+        return this.plugin.settings.displayName
     }
 
     set value(val: string) {
-        this.plugin.settings.userName = val
+        this.plugin.settings.displayName = val
         this.plugin.saveSettings()
     }
 
@@ -122,7 +134,7 @@ class UserNameSetting extends TextInputSetting {
     }
 
     get placeholder(): string {
-        return "Enter your username..."
+        return "Enter your display name..."
     }
 }
 
@@ -308,7 +320,7 @@ class GeneralSettings extends SettingsTabPage {
 
     display(containerEl: HTMLElement): void {
         new EnableFeatureSetting(this.plugin).display(containerEl)
-        new UserNameSetting(this.plugin).display(containerEl)
+        new DisplayNameSetting(this.plugin).display(containerEl)
         new ThemeSetting(this.plugin).display(containerEl)
     }
 }
