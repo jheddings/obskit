@@ -35,7 +35,7 @@
         "test": "jest"
     },
     "peerDependencies": {
-        "obsidian": "^1.12.2"
+        "obsidian": "^1.12.3"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
