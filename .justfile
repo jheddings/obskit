@@ -21,10 +21,8 @@ check:
 test:
 	npm test
 
-# full preflight: build + test + check
-preflight: build test
-	npx prettier --check .
-	npx eslint src
+# full preflight: build + check + test
+preflight: build check test
 
 # build the library
 build:
