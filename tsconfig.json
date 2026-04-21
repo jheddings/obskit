@@ -3,9 +3,9 @@
         "rootDir": "./src",
         "outDir": "./dist",
 
-        "module": "CommonJS",
+        "module": "ESNext",
         "target": "ES2020",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "types": [],
 
         "sourceMap": true,

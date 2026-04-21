@@ -17,7 +17,7 @@ describe("deepMerge", () => {
 
     it("fills in missing keys in nested objects", () => {
         const defaults = { rendering: { color: "blue", size: 12 } }
-        const saved = { rendering: { color: "red" } }
+        const saved = { rendering: { color: "red" } } as Partial<typeof defaults>
         const result = deepMerge(defaults, saved)
         expect(result).toEqual({ rendering: { color: "red", size: 12 } })
     })
@@ -38,7 +38,9 @@ describe("deepMerge", () => {
 
     it("preserves falsy values from saved data", () => {
         const defaults = { enabled: true, count: 10, name: "default", data: { a: 1 } }
-        const saved = { enabled: false, count: 0, name: "", data: null }
+        const saved = { enabled: false, count: 0, name: "", data: null } as unknown as Partial<
+            typeof defaults
+        >
         const result = deepMerge(defaults, saved)
         expect(result).toEqual({ enabled: false, count: 0, name: "", data: null })
     })
@@ -59,7 +61,7 @@ describe("deepMerge", () => {
 
     it("does not mutate the saved object", () => {
         const defaults = { rendering: { color: "blue", size: 12 } }
-        const saved = { rendering: { color: "red" } }
+        const saved = { rendering: { color: "red" } } as Partial<typeof defaults>
         deepMerge(defaults, saved)
         expect(saved).toEqual({ rendering: { color: "red" } })
     })
@@ -78,6 +80,7 @@ function createMockPlugin(data: Record<string, unknown> | null = null) {
 }
 
 interface TestSettings {
+    [key: string]: unknown
     name: string
     count: number
     nested: { enabled: boolean; color: string }
@@ -233,6 +236,7 @@ describe("PluginConfig", () => {
 
     it("deep merges after migrations fill in new defaults", async () => {
         interface V2Settings {
+            [key: string]: unknown
             name: string
             count: number
             nested: { enabled: boolean; color: string; size: number }
