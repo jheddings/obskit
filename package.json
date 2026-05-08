@@ -37,6 +37,9 @@
     "peerDependencies": {
         "obsidian": "^1.12.3"
     },
+    "engines": {
+        "node": ">=22.22.1"
+    },
     "devDependencies": {
         "@types/jest": "^30.0.0",
         "@types/node": "^24.12.3",
